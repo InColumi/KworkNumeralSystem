@@ -66,6 +66,26 @@ string GetBineryResult(string line)
 	return to_string(number);
 }
 
+string GetOctal(int number)
+{
+	vector<int> numberInOctal;
+	int remainder;
+	while(number > 8)
+	{
+		remainder = number / 8;
+		numberInOctal.push_back(number - remainder * 8);
+		number /= 8;
+	}
+	numberInOctal.push_back(remainder);
+
+	string res = "";
+	for(int i = numberInOctal.size() - 1; i >= 0; i--)
+	{
+		res += to_string(numberInOctal[i]);
+	}
+	return res;
+}
+
 string ConvertToDecimalSystem(string line)
 {
 	char typeOfSystem = line[line.size() - 1];
@@ -75,6 +95,7 @@ string ConvertToDecimalSystem(string line)
 		case 'b':
 		{
 			res = GetBineryResult(line);
+			res = GetOctal(259);
 			break;
 		}
 		case 'd':
@@ -94,14 +115,15 @@ string ConvertToDecimalSystem(string line)
 			cout << "Неизвестная система.\n";
 			break;
 		}
-		return res;
 	}
+	return res;
 }
 
 string ConvertToDifferentNumericSystem(int numericSystem)
 {
 	vector<string> numbers = GetTextFromFile("Input task 1.txt");
-	//double number1 = numbers[0];
+	string number1 = ConvertToDecimalSystem(numbers[0]);
+	string number2 = ConvertToDecimalSystem(numbers[1]);
 	//double number2 = numbers[1];
 
 	string res = "";
@@ -110,7 +132,8 @@ string ConvertToDifferentNumericSystem(int numericSystem)
 		case 1:
 		{
 			cout << "Двоичная система счисления.\n";
-			cout << ConvertToDecimalSystem(numbers[0]) << '\n';
+			cout << number1 << '\n';
+			cout << number2 << '\n';
 			break;
 		}
 
