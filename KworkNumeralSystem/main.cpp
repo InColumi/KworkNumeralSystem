@@ -5,7 +5,7 @@
 
 using namespace std;
 
-vector<double> GetTextFromFile(string fileName)
+vector<string> GetTextFromFile(string fileName)
 {
 	ifstream in;
 	in.open(fileName);
@@ -16,10 +16,10 @@ vector<double> GetTextFromFile(string fileName)
 	}
 
 	string line;
-	vector<double> text;
+	vector<string> text;
 	while(getline(in, line))
 	{
-		text.push_back(stod(line));
+		text.push_back(line);
 	}
 	in.close();
 	return text;
@@ -50,14 +50,67 @@ void ShowNumericSystem()
 	cout << "3) 16-я\n";
 }
 
+string GetBineryResult(string line)
+{
+	int number = 0;
+	int index = 1;
+	for(size_t i = 1; i < line.size(); i++)
+	{
+		if(line[line.size() - i - 1] != '0')
+		{
+			number += index;
+		}		
+		index *= 2;
+	}
+
+	return to_string(number);
+}
+
+string ConvertToDecimalSystem(string line)
+{
+	char typeOfSystem = line[line.size() - 1];
+	string res;
+	switch(typeOfSystem)
+	{
+		case 'b':
+		{
+			res = GetBineryResult(line);
+			break;
+		}
+		case 'd':
+		{
+			break;
+		}
+		case 'h':
+		{
+			break;
+		}
+		case 'o':
+		{
+			break;
+		}
+		default:
+		{
+			cout << "Неизвестная система.\n";
+			break;
+		}
+		return res;
+	}
+}
+
 string ConvertToDifferentNumericSystem(int numericSystem)
 {
+	vector<string> numbers = GetTextFromFile("Input task 1.txt");
+	//double number1 = numbers[0];
+	//double number2 = numbers[1];
+
 	string res = "";
 	switch(numericSystem)
 	{
 		case 1:
 		{
 			cout << "Двоичная система счисления.\n";
+			cout << ConvertToDecimalSystem(numbers[0]) << '\n';
 			break;
 		}
 
@@ -96,7 +149,7 @@ string GetResultOperation(int numberOfOperation)
 		case 2:
 		{
 			cout << "2) - (вычитание)\n";
-			
+
 			break;
 		}
 		case 3:
