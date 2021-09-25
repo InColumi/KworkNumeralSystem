@@ -50,7 +50,7 @@ void ShowNumericSystem()
 	cout << "3) 16-я\n";
 }
 
-string GetBineryResult(string line)
+string GetDesimalResultFromBinarySystem(string line)
 {
 	int number = 0;
 	int index = 1;
@@ -94,12 +94,16 @@ string ConvertToDecimalSystem(string line)
 	{
 		case 'b':
 		{
-			res = GetBineryResult(line);
-			res = GetOctal(259);
+			res = GetDesimalResultFromBinarySystem(line);
 			break;
 		}
 		case 'd':
 		{
+			res = "";
+			for(size_t i = 0; i < line.size() - 1; i++)
+			{
+				res += line[i];
+			}
 			break;
 		}
 		case 'h':
@@ -123,7 +127,7 @@ string ConvertToDifferentNumericSystem(int numericSystem)
 {
 	vector<string> numbers = GetTextFromFile("Input task 1.txt");
 	string number1 = ConvertToDecimalSystem(numbers[0]);
-	string number2 = ConvertToDecimalSystem(numbers[1]);
+	//string number2 = ConvertToDecimalSystem(numbers[1]);
 	//double number2 = numbers[1];
 
 	string res = "";
@@ -133,7 +137,7 @@ string ConvertToDifferentNumericSystem(int numericSystem)
 		{
 			cout << "Двоичная система счисления.\n";
 			cout << number1 << '\n';
-			cout << number2 << '\n';
+			//cout << number2 << '\n';
 			break;
 		}
 
