@@ -50,23 +50,54 @@ void ShowNumericSystem()
 	cout << "3) 16-я\n";
 }
 
-string GetDesimalResultFromBinary(string line)
+
+string GetDesimalFromBinary(string line)
 {
-	int number = 0;
-	int index = 1;
-	for(size_t i = 1; i < line.size(); i++)
+	vector<string> integerPartBinary;
+	size_t indexDot;
+	string itemLine = "";
+	for(size_t i = 0; i < line.size(); i++)
 	{
-		if(line[line.size() - i - 1] != '0')
+		if(line[i] != ',')
 		{
-			number += index;
+			itemLine += line[i];
+			integerPartBinary.push_back(itemLine);
+			itemLine.clear();
 		}
-		index *= 2;
+		else
+		{
+			indexDot = i;
+			break;
+		}
 	}
 
-	return to_string(number);
+	vector<string> fractionalPartBinary;
+	for(size_t i = indexDot + 1; i < line.size(); i++)
+	{
+		itemLine += line[i];
+		fractionalPartBinary.push_back(itemLine);
+		itemLine.clear();
+	}
+
+	double integerPartDecimal = 0;
+	double fractionalPartDecimal = 0;
+	double degree = 1;
+	for(int i = integerPartBinary.size() - 1; i >= 0 ; i--)
+	{
+		integerPartDecimal += degree * stoi(integerPartBinary[i]);
+		degree *= 2;
+	}
+	degree = 1.0 / 2;
+	for(int i = fractionalPartBinary.size() - 1; i >= 0; i--)
+	{
+		fractionalPartDecimal += degree * stoi(fractionalPartBinary[i]);
+		degree /= 2;
+	}
+
+	return to_string(integerPartDecimal + fractionalPartDecimal);
 }
 
-string GetOctal(int number)
+string GetOctalFromDecimal(int number)
 {
 	vector<int> numberInOctal;
 	int remainder;
@@ -143,7 +174,7 @@ string GetDecimalFromHex(string line)
 string GetDecimalFromOctal(string line)
 {
 	vector<int> numberDegrees;
-	for(int i = line.size() - 2; i >= 0; i--)
+	for(int i = line.size() - 1; i >= 0; i--)
 	{
 		numberDegrees.push_back((int) line[i] - 48);
 	}
@@ -161,18 +192,23 @@ string GetDecimalFromOctal(string line)
 string ConvertToDecimal(string line)
 {
 	char typeOfSystem = line[line.size() - 1];
+	string newLine = "";
+	for(size_t i = 0; i < line.size() - 1; i++)
+	{
+		newLine += line[i];
+	}
 	string res;
 	switch(typeOfSystem)
 	{
 		case 'b':
 		{
-			res = GetDesimalResultFromBinary(line);
+			res = GetDesimalFromBinary(newLine);
 			break;
 		}
 		case 'd':
 		{
 			res = "";
-			for(size_t i = 0; i < line.size() - 1; i++)
+			for(size_t i = 0; i < newLine.size(); i++)
 			{
 				res += line[i];
 			}
@@ -185,7 +221,7 @@ string ConvertToDecimal(string line)
 		}
 		case 'o':
 		{
-			res = GetDecimalFromOctal(line);
+			res = GetDecimalFromOctal(newLine);
 			break;
 		}
 		default:
@@ -207,7 +243,7 @@ vector<string> ConvertToDecimal(vector<string> inputLines)
 	return res;
 }
 
-string ConvertFractionalPart(string line, int numericSystem)
+string ConvertDecimalFractionalPartTo(string line, int numericSystem)
 {
 	int countSymbolsAfterDot = 10;
 	double integer;
@@ -236,13 +272,13 @@ string ConvertFractionalPart(string line, int numericSystem)
 	{
 		fractionalPart *= numericSystem;
 		fractionalPart = modf(fractionalPart, &integer);
-		result += to_string((int)integer);
+		result += to_string((int) integer);
 	}
 
 	return result;
 }
 
-string GetBineryFromIntDedimal(int number)
+string GetBineryFromIntDecimal(int number)
 {
 	vector<int> reversNumber;
 	int integerPart;
@@ -262,7 +298,7 @@ string GetBineryFromIntDedimal(int number)
 	return res;
 }
 
-vector<string> GetBinaryFromDoubleDedimal(vector<string> stringNumbers)
+vector<string> GetFromDoubleDedimal(vector<string> stringNumbers, string(*getConvertFromIntDecimal)(int), int numericSystem)
 {
 	double number;
 	double integerPart;
@@ -273,8 +309,8 @@ vector<string> GetBinaryFromDoubleDedimal(vector<string> stringNumbers)
 	{
 		number = stod(stringNumbers[i]);
 		fractionalPart = modf(number, &integerPart);
-		result = GetBineryFromIntDedimal((int) integerPart);
-		result += "," + ConvertFractionalPart(to_string(fractionalPart), 2);
+		result = getConvertFromIntDecimal((int) integerPart);
+		result += "," + ConvertDecimalFractionalPartTo(to_string(fractionalPart), numericSystem);
 		results.push_back(result);
 		result.clear();
 	}
@@ -302,21 +338,24 @@ void ConvertToDifferentNumericSystem(int numericSystem)
 		{
 			cout << "Двоичная система счисления.\n";
 			numbersInDecimal = ConvertToDecimal(inputFromFile);
-			resultsConverts = GetBinaryFromDoubleDedimal(numbersInDecimal);
-			ShowVector(resultsConverts);
+			resultsConverts = GetFromDoubleDedimal(numbersInDecimal, GetBineryFromIntDecimal, 2);
+
 			break;
 		}
 
 		case 2:
 		{
 			cout << "Восмиричная система счисления.\n";
-
+			numbersInDecimal = ConvertToDecimal(inputFromFile);
+			resultsConverts = GetFromDoubleDedimal(numbersInDecimal, GetOctalFromDecimal, 8);
 			break;
 		}
 
 		case 3:
 		{
-			cout << "Десятичная система счисления.\n";
+			cout << "Шестнадцатеричная система счисления.\n";
+			numbersInDecimal = ConvertToDecimal(inputFromFile);
+			//resultsConverts = GetFromDoubleDedimal(numbersInDecimal, , 16);
 			break;
 		}
 
@@ -326,6 +365,7 @@ void ConvertToDifferentNumericSystem(int numericSystem)
 			break;
 		}
 	}
+	ShowVector(resultsConverts);
 }
 
 string GetResultOperation(int numberOfOperation)
@@ -384,9 +424,8 @@ void ShowMenu()
 			case 1:
 			{
 				cout << "Преобразование.\n";
-				//cout << ConvertFractionalPart("0,7", 16) << '\n';
-				//ShowNumericSystem();
-				//userInput = GetInput();
+				ShowNumericSystem();
+				cin >> userInput;
 				ConvertToDifferentNumericSystem(userInput);
 				break;
 			}
