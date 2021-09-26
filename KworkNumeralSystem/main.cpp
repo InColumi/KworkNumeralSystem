@@ -50,7 +50,7 @@ void ShowNumericSystem()
 	cout << "3) 16-я\n";
 }
 
-string GetDesimalResultFromBinarySystem(string line)
+string GetDesimalResultFromBinary(string line)
 {
 	int number = 0;
 	int index = 1;
@@ -86,7 +86,21 @@ string GetOctal(int number)
 	return res;
 }
 
-int GetValue(char symbol)
+char GetSymbolByValue(int value)
+{
+	vector<int> values = {10,11,12,13,14,15};
+	vector<int> symbols = {'A','B','C','D','E','F'};
+
+	for(size_t i = 0; i < symbols.size(); i++)
+	{
+		if(values[i] == value)
+		{
+			return symbols[i];
+		}
+	}
+}
+
+int GetValueBySymbol(char symbol)
 {
 	vector<char> symbols = {'A','B','C','D','E','F'};
 	int value = 10;
@@ -107,7 +121,7 @@ string GetDecimalFromHex(string line)
 	{
 		if(isdigit(line[i]) == 0)
 		{
-			numberDegrees.push_back(GetValue(line[i]));
+			numberDegrees.push_back(GetValueBySymbol(line[i]));
 		}
 		else
 		{
@@ -126,7 +140,25 @@ string GetDecimalFromHex(string line)
 	return to_string(res);
 }
 
-string ConvertToDecimalSystem(string line)
+string GetDecimalFromOctal(string line)
+{
+	vector<int> numberDegrees;
+	for(int i = line.size() - 2; i >= 0; i--)
+	{
+		numberDegrees.push_back((int) line[i] - 48);
+	}
+
+	int degree = 1;
+	int res = 0;
+	for(int i = 0; i < numberDegrees.size(); i++)
+	{
+		res += degree * numberDegrees[i];
+		degree *= 8;
+	}
+	return to_string(res);
+}
+
+string ConvertToDecimal(string line)
 {
 	char typeOfSystem = line[line.size() - 1];
 	string res;
@@ -134,7 +166,7 @@ string ConvertToDecimalSystem(string line)
 	{
 		case 'b':
 		{
-			res = GetDesimalResultFromBinarySystem(line);
+			res = GetDesimalResultFromBinary(line);
 			break;
 		}
 		case 'd':
@@ -153,6 +185,7 @@ string ConvertToDecimalSystem(string line)
 		}
 		case 'o':
 		{
+			res = GetDecimalFromOctal(line);
 			break;
 		}
 		default:
@@ -164,10 +197,45 @@ string ConvertToDecimalSystem(string line)
 	return res;
 }
 
+string ConvertFractionalPart(string line, int numericSystem)
+{
+	int countSymbolsAfterDot = 5;
+	double integer;
+	string result = "0,";
+	double fractionalPart = stod(line);
+
+	if(numericSystem == 16)
+	{
+		for(size_t i = 0; i < countSymbolsAfterDot; i++)
+		{
+			fractionalPart *= numericSystem;
+			fractionalPart = modf(fractionalPart, &integer);
+			if(integer > 10)
+			{
+				result.push_back(GetSymbolByValue(integer));
+			}
+			else
+			{
+				result += to_string((int) integer);
+			}
+		}
+		return result;
+	}
+
+	for(size_t i = 0; i < countSymbolsAfterDot; i++)
+	{
+		fractionalPart *= numericSystem;
+		fractionalPart = modf(fractionalPart, &integer);
+		result += integer;
+	}
+
+	return result;
+}
+
 string ConvertToDifferentNumericSystem(int numericSystem)
 {
 	vector<string> numbers = GetTextFromFile("Input task 1.txt");
-	string number1 = ConvertToDecimalSystem(numbers[0]);
+	string number1 = ConvertToDecimal(numbers[0]);
 	//string number2 = ConvertToDecimalSystem(numbers[1]);
 	//double number2 = numbers[1];
 
@@ -185,6 +253,7 @@ string ConvertToDifferentNumericSystem(int numericSystem)
 		case 2:
 		{
 			cout << "Восмиричная система счисления.\n";
+
 			break;
 		}
 
@@ -260,9 +329,10 @@ void ShowMenu()
 			case 1:
 			{
 				cout << "Преобразование.\n";
-				ShowNumericSystem();
-				userInput = GetInput();
-				cout << ConvertToDifferentNumericSystem(userInput) << '\n';
+				cout << ConvertFractionalPart("0,7", 16) << '\n';
+				//ShowNumericSystem();
+				//userInput = GetInput();
+				// << ConvertToDifferentNumericSystem(userInput) << '\n';
 				break;
 			}
 
