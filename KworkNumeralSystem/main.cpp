@@ -27,15 +27,14 @@ vector<string> GetTextFromFile(string fileName)
 
 void ShowMenuCommand()
 {
-	cout << "1) Перевести вводимые из файла числа (возможно, дробные) из заданной системы счисления в десятичную систему счисления.\n";
-	cout << "2) Выполнить арифметические операции (+, -, *, /) в указанной системе счисления над (возможно, дробными) числами, вводимыми из файла.\n";
-	cout << "2) Выйти из программы.\n";
+	cout << "1) Перевести вводимые из файла числа (возможно, дробные) из заданной системы счисления в десятичную систему счисления.\n\n";
+	cout << "2) Выполнить арифметические операции (+, -, *, /) в указанной системе счисления над (возможно, дробными) числами, вводимыми из файла.\n\n";
+	cout << "3) Выйти из программы.\n\n";
 }
 
 void ShowOparation()
 {
 	cout << "Выберете действие:\n";
-	cout << "1) + (сложение)\n";
 	cout << "1) + (сложение)\n";
 	cout << "2) - (вычитание)\n";
 	cout << "3) * (умножение)\n";
@@ -45,9 +44,9 @@ void ShowOparation()
 void ShowNumericSystem()
 {
 	cout << "Выберете систему счисления:\n";
-	cout << "1) 2-я\n";
-	cout << "2) 8-я\n";
-	cout << "3) 16-я\n";
+	cout << "b)  2-я\n";
+	cout << "o)  8-я\n";
+	cout << "h)  16-я\n";
 }
 
 char GetSymbolByValue(int value)
@@ -153,7 +152,7 @@ string GetDecimalFromDiffentSystem(string line, int numericalSystem)
 			fractionalPartDecimal += degree * stoi(fractionalPartBinary[i]);
 			degree /= numericalSystem;
 		}
-	}	
+	}
 
 	return to_string(integerPartDecimal + fractionalPartDecimal);
 }
@@ -283,7 +282,7 @@ string GetDifferentSystemFromIntDecimal(int number, int numericSystem)
 		}
 	}
 
-	
+
 	return res;
 }
 
@@ -315,15 +314,14 @@ void ShowVector(vector<T> lines)
 	}
 }
 
-void ConvertToDifferentNumericSystem(int numericSystem)
+void ConvertToDifferentNumericSystem(char numericSystem, vector<string> inputFromFile)
 {
-	vector<string> inputFromFile = GetTextFromFile("Input task 1.txt");
 	vector<string> numbersInDecimal;
 	vector<string> resultsConverts;
 
 	switch(numericSystem)
 	{
-		case 1:
+		case 'b':
 		{
 			cout << "Двоичная система счисления.\n";
 			numbersInDecimal = ConvertToDecimal(inputFromFile);
@@ -332,7 +330,7 @@ void ConvertToDifferentNumericSystem(int numericSystem)
 			break;
 		}
 
-		case 2:
+		case 'o':
 		{
 			cout << "Восмиричная система счисления.\n";
 			numbersInDecimal = ConvertToDecimal(inputFromFile);
@@ -340,7 +338,7 @@ void ConvertToDifferentNumericSystem(int numericSystem)
 			break;
 		}
 
-		case 3:
+		case 'h':
 		{
 			cout << "Шестнадцатеричная система счисления.\n";
 			numbersInDecimal = ConvertToDecimal(inputFromFile);
@@ -357,38 +355,89 @@ void ConvertToDifferentNumericSystem(int numericSystem)
 	ShowVector(resultsConverts);
 }
 
-string GetResultOperation(int numberOfOperation)
+//string ConvertToDifferentNumericSystem(char symbolNumericSystem, vector)
+//{
+//	string res;
+//	switch(symbolNumericSystem)
+//	{
+//		case '1':
+//		{
+//			res = GetDifferentSystemFromIntDecimal(number, 2);
+//			res = GetFromDoubleDedimal(numbersInDecimal, GetDifferentSystemFromIntDecimal, 2);
+//			break;
+//		}
+//		case '2':
+//		{
+//			res = GetDifferentSystemFromIntDecimal(number, 16);
+//			break;
+//		}
+//		case '3':
+//		{
+//			res = GetDifferentSystemFromIntDecimal(number, 8);
+//			break;
+//		}
+//		default:
+//		{
+//			cout << "Неизвестная система.\n";
+//			break;
+//		}
+//	}
+//	return res;
+//}
+
+void ShowResultOperation(int numberOfOperation)
 {
-	string res;
+	vector<string> inputFromFile = GetTextFromFile("Input task 2.txt");
+	vector<string> numbersInDecimal = ConvertToDecimal(inputFromFile);;
+
+	vector<string> resultsConverts;
+
+	double number1 = stod(numbersInDecimal[0]);
+	double number2 = stod(numbersInDecimal[1]);
+
+	//resultsConverts.push_back();
+	char numericNumer;
 	switch(numberOfOperation)
 	{
 		case 1:
 		{
 			cout << "1) + (сложение)\n";
+			ShowNumericSystem();
+			cin >> numericNumer;
+			resultsConverts.push_back(to_string(number1 + number2) + 'd');
+			ConvertToDifferentNumericSystem(numericNumer, resultsConverts);
 			break;
 		}
 		case 2:
 		{
 			cout << "2) - (вычитание)\n";
-
+			ShowNumericSystem();
+			cin >> numericNumer;
+			resultsConverts.push_back(to_string(number1 - number2) + 'd');
+			ConvertToDifferentNumericSystem(numericNumer, resultsConverts);
 			break;
 		}
 		case 3:
 		{
-
 			cout << "3) * (умножение)\n";
+			ShowNumericSystem();
+			cin >> numericNumer;
+			resultsConverts.push_back(to_string(number1 * number2) + 'd');
+			ConvertToDifferentNumericSystem(numericNumer, resultsConverts);
 			break;
 		}
 		case 4:
 		{
-
 			cout << "4) / (деление)\n";
+			ShowNumericSystem();
+			cin >> numericNumer;
+			resultsConverts.push_back(to_string(number1 / number2) + 'd');
+			ConvertToDifferentNumericSystem(numericNumer, resultsConverts);
 			break;
 		}
 		default:
 			break;
 	}
-	return res;
 }
 
 int GetInput()
@@ -403,10 +452,11 @@ int GetInput()
 void ShowMenu()
 {
 	bool isExit = false;
-	int userInput;
+	
 	while(isExit == false)
 	{
 		ShowMenuCommand();
+		char userInput;
 		userInput = GetInput();
 		switch(userInput)
 		{
@@ -414,18 +464,20 @@ void ShowMenu()
 			{
 				cout << "Преобразование.\n";
 				ShowNumericSystem();
+				char userInput;
 				cin >> userInput;
-				ConvertToDifferentNumericSystem(userInput);
+				vector<string> inputFromFile = GetTextFromFile("Input task 1.txt");
+				ConvertToDifferentNumericSystem(userInput, inputFromFile);
 				break;
 			}
 
 			case 2:
 			{
 				cout << "Математические действия:\n";
-				ShowNumericSystem();
 				ShowOparation();
+				int userInput;
 				cin >> userInput;
-				cout << GetResultOperation(userInput) << '\n';
+				ShowResultOperation(userInput);
 				break;
 			}
 
@@ -441,6 +493,7 @@ void ShowMenu()
 				break;
 			}
 		}
+		cout << "--------------\n";
 	}
 }
 
