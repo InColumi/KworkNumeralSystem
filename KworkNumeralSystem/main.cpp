@@ -59,7 +59,7 @@ string GetDesimalResultFromBinarySystem(string line)
 		if(line[line.size() - i - 1] != '0')
 		{
 			number += index;
-		}		
+		}
 		index *= 2;
 	}
 
@@ -86,6 +86,46 @@ string GetOctal(int number)
 	return res;
 }
 
+int GetValue(char symbol)
+{
+	vector<char> symbols = {'A','B','C','D','E','F'};
+	int value = 10;
+	for(size_t i = 0; i < symbols.size(); i++)
+	{
+		if(symbol == symbols[i])
+		{
+			return value;
+		}
+		value++;
+	}
+}
+
+string GetDecimalFromHex(string line)
+{
+	vector<int> numberDegrees;
+	for(int i = line.size() - 2; i >= 0; i--)
+	{
+		if(isdigit(line[i]) == 0)
+		{
+			numberDegrees.push_back(GetValue(line[i]));
+		}
+		else
+		{
+			numberDegrees.push_back((int) line[i] - 48);
+		}
+	}
+
+	int degree = 1;
+	int res = 0;
+	for(int i = 0; i < numberDegrees.size(); i++)
+	{
+		res += degree * numberDegrees[i];
+		degree *= 16;
+	}
+
+	return to_string(res);
+}
+
 string ConvertToDecimalSystem(string line)
 {
 	char typeOfSystem = line[line.size() - 1];
@@ -108,6 +148,7 @@ string ConvertToDecimalSystem(string line)
 		}
 		case 'h':
 		{
+			res = GetDecimalFromHex(line);
 			break;
 		}
 		case 'o':
