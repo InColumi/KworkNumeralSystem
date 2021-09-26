@@ -70,7 +70,7 @@ string GetOctal(int number)
 {
 	vector<int> numberInOctal;
 	int remainder;
-	while(number > 8)
+	while(number >= 8)
 	{
 		remainder = number / 8;
 		numberInOctal.push_back(number - remainder * 8);
@@ -197,11 +197,21 @@ string ConvertToDecimal(string line)
 	return res;
 }
 
+vector<string> ConvertToDecimal(vector<string> inputLines)
+{
+	vector<string> res;
+	for(size_t i = 0; i < inputLines.size(); i++)
+	{
+		res.push_back(ConvertToDecimal(inputLines[i]));
+	}
+	return res;
+}
+
 string ConvertFractionalPart(string line, int numericSystem)
 {
-	int countSymbolsAfterDot = 5;
+	int countSymbolsAfterDot = 10;
 	double integer;
-	string result = "0,";
+	string result = "";
 	double fractionalPart = stod(line);
 
 	if(numericSystem == 16)
@@ -226,27 +236,74 @@ string ConvertFractionalPart(string line, int numericSystem)
 	{
 		fractionalPart *= numericSystem;
 		fractionalPart = modf(fractionalPart, &integer);
-		result += integer;
+		result += to_string((int)integer);
 	}
 
 	return result;
 }
 
-string ConvertToDifferentNumericSystem(int numericSystem)
+string GetBineryFromIntDedimal(int number)
 {
-	vector<string> numbers = GetTextFromFile("Input task 1.txt");
-	string number1 = ConvertToDecimal(numbers[0]);
-	//string number2 = ConvertToDecimalSystem(numbers[1]);
-	//double number2 = numbers[1];
+	vector<int> reversNumber;
+	int integerPart;
+	while(number >= 2)
+	{
+		integerPart = number / 2;
+		reversNumber.push_back(number - integerPart * 2);
+		number /= 2;
+	}
+	reversNumber.push_back(number);
 
 	string res = "";
+	for(int i = reversNumber.size() - 1; i >= 0; i--)
+	{
+		res += to_string(reversNumber[i]);
+	}
+	return res;
+}
+
+vector<string> GetBinaryFromDoubleDedimal(vector<string> stringNumbers)
+{
+	double number;
+	double integerPart;
+	double fractionalPart;
+	vector<string> results;
+	string result = "";
+	for(size_t i = 0; i < stringNumbers.size(); i++)
+	{
+		number = stod(stringNumbers[i]);
+		fractionalPart = modf(number, &integerPart);
+		result = GetBineryFromIntDedimal((int) integerPart);
+		result += "," + ConvertFractionalPart(to_string(fractionalPart), 2);
+		results.push_back(result);
+		result.clear();
+	}
+	return results;
+}
+
+template <typename T>
+void ShowVector(vector<T> lines)
+{
+	for(size_t i = 0; i < lines.size(); i++)
+	{
+		cout << lines[i] << '\n';
+	}
+}
+
+void ConvertToDifferentNumericSystem(int numericSystem)
+{
+	vector<string> inputFromFile = GetTextFromFile("Input task 1.txt");
+	vector<string> numbersInDecimal;
+	vector<string> resultsConverts;
+
 	switch(numericSystem)
 	{
 		case 1:
 		{
 			cout << "Двоичная система счисления.\n";
-			cout << number1 << '\n';
-			//cout << number2 << '\n';
+			numbersInDecimal = ConvertToDecimal(inputFromFile);
+			resultsConverts = GetBinaryFromDoubleDedimal(numbersInDecimal);
+			ShowVector(resultsConverts);
 			break;
 		}
 
@@ -269,8 +326,6 @@ string ConvertToDifferentNumericSystem(int numericSystem)
 			break;
 		}
 	}
-
-	return res;
 }
 
 string GetResultOperation(int numberOfOperation)
@@ -329,10 +384,10 @@ void ShowMenu()
 			case 1:
 			{
 				cout << "Преобразование.\n";
-				cout << ConvertFractionalPart("0,7", 16) << '\n';
+				//cout << ConvertFractionalPart("0,7", 16) << '\n';
 				//ShowNumericSystem();
 				//userInput = GetInput();
-				// << ConvertToDifferentNumericSystem(userInput) << '\n';
+				ConvertToDifferentNumericSystem(userInput);
 				break;
 			}
 
@@ -366,6 +421,5 @@ int main()
 	setlocale(LC_ALL, "rus");
 
 	ShowMenu();
-	system("pause");
 	return 0;
 }
