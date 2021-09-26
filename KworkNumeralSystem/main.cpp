@@ -51,7 +51,7 @@ void ShowNumericSystem()
 }
 
 
-string GetDesimalFromBinary(string line)
+string GetDecimalFromDiffentSystem(string line, int numericalSystem)
 {
 	vector<string> integerPartBinary;
 	size_t indexDot;
@@ -85,13 +85,13 @@ string GetDesimalFromBinary(string line)
 	for(int i = integerPartBinary.size() - 1; i >= 0 ; i--)
 	{
 		integerPartDecimal += degree * stoi(integerPartBinary[i]);
-		degree *= 2;
+		degree *= numericalSystem;
 	}
-	degree = 1.0 / 2;
-	for(int i = fractionalPartBinary.size() - 1; i >= 0; i--)
+	degree = 1.0 / numericalSystem;
+	for(int i = 0; i < fractionalPartBinary.size(); i++)
 	{
 		fractionalPartDecimal += degree * stoi(fractionalPartBinary[i]);
-		degree /= 2;
+		degree /= numericalSystem;
 	}
 
 	return to_string(integerPartDecimal + fractionalPartDecimal);
@@ -202,7 +202,7 @@ string ConvertToDecimal(string line)
 	{
 		case 'b':
 		{
-			res = GetDesimalFromBinary(newLine);
+			res = GetDecimalFromDiffentSystem(newLine, 2);
 			break;
 		}
 		case 'd':
@@ -221,7 +221,7 @@ string ConvertToDecimal(string line)
 		}
 		case 'o':
 		{
-			res = GetDecimalFromOctal(newLine);
+			res = GetDecimalFromDiffentSystem(newLine, 8);
 			break;
 		}
 		default:
