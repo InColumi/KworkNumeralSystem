@@ -318,8 +318,13 @@ void ConvertToDifferentNumericSystem(char numericSystem, vector<string> inputFro
 {
 	vector<string> numbersInDecimal;
 	vector<string> resultsConverts;
-
-	switch(numericSystem)
+	
+	
+	cout << "Десятичная система счисления.\n";
+	numbersInDecimal = ConvertToDecimal(inputFromFile);
+	resultsConverts = GetFromDoubleDedimal(numbersInDecimal, GetDifferentSystemFromIntDecimal, 10);
+	
+	/*switch(numericSystem)
 	{
 		case 'b':
 		{
@@ -351,7 +356,7 @@ void ConvertToDifferentNumericSystem(char numericSystem, vector<string> inputFro
 			cout << "Неизвестная система счисления!\n";
 			break;
 		}
-	}
+	}*/
 	ShowVector(resultsConverts);
 }
 
@@ -463,9 +468,6 @@ void ShowMenu()
 			case 1:
 			{
 				cout << "Преобразование.\n";
-				ShowNumericSystem();
-				char userInput;
-				cin >> userInput;
 				vector<string> inputFromFile = GetTextFromFile("Input task 1.txt");
 				ConvertToDifferentNumericSystem(userInput, inputFromFile);
 				break;
