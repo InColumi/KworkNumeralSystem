@@ -139,7 +139,7 @@ string GetDecimalFromDiffentSystem(string line, int numericalSystem)
 			}
 			else
 			{
-				number = ((int) line[i] - 48);
+				number = stoi(fractionalPartBinary[i]);
 			}
 			fractionalPartDecimal += degree * number;
 			degree /= numericalSystem;
@@ -219,7 +219,7 @@ vector<string> ConvertToDecimal(vector<string> inputLines)
 
 string ConvertDecimalFractionalPartTo(string line, int numericSystem)
 {
-	int countSymbolsAfterDot = 10;
+	int countSymbolsAfterDot = 5;
 	double integer;
 	string result = "";
 	double fractionalPart = stod(line);
@@ -416,6 +416,7 @@ void ShowResultOperation(int numberOfOperation)
 		default:
 			break;
 	}
+	resultsConverts.clear();
 }
 
 int GetInput()
